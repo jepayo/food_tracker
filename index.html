@@ -118,6 +118,54 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .qty-display.active { color:var(--green); }
 .empty-state { text-align:center; padding:30px; color:var(--muted); font-size:13px; }
 
+/* CUSTOM ENTRY */
+.custom-entry {
+  margin-top:16px;
+  background:var(--surface);
+  border:1px dashed var(--border);
+  border-radius:10px;
+  padding:14px;
+}
+.ce-title {
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.ce-row { margin-bottom:8px; }
+.ce-macros { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.ce-field { display:flex; flex-direction:column; gap:4px; }
+.ce-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.ce-input {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  padding:8px 10px;
+  outline:none;
+  width:100%;
+}
+.ce-input:focus { border-color:var(--accent); }
+.ce-btn {
+  width:100%;
+  padding:10px;
+  border-radius:7px;
+  border:none;
+  background:var(--surface2);
+  color:var(--text);
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  cursor:pointer;
+  border:1px solid var(--border);
+  margin-top:4px;
+}
+.ce-btn:active { background:var(--accent); color:white; border-color:var(--accent); }
+
 /* ── AYUNO ── */
 .fast-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; padding-bottom:20px; }
 .fast-ring { width:160px; height:160px; transform:rotate(-90deg); }
@@ -252,6 +300,29 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
       </div>
       <div class="cats" id="cat-tabs"></div>
       <div class="food-list" id="food-list"></div>
+
+      <!-- ENTRADA PERSONALIZADA -->
+      <div class="custom-entry" id="custom-entry-form">
+        <div class="ce-title">+ CONSUMO MANUAL</div>
+        <div class="ce-row">
+          <input class="ce-input" type="text" id="ce-name" placeholder="Nombre (ej: paella familiar)">
+        </div>
+        <div class="ce-row ce-macros">
+          <div class="ce-field">
+            <label class="ce-label">Proteína g</label>
+            <input class="ce-input" type="number" id="ce-prot" placeholder="0">
+          </div>
+          <div class="ce-field">
+            <label class="ce-label">Carbos g</label>
+            <input class="ce-input" type="number" id="ce-carb" placeholder="0">
+          </div>
+          <div class="ce-field">
+            <label class="ce-label">kcal</label>
+            <input class="ce-input" type="number" id="ce-kcal" placeholder="0">
+          </div>
+        </div>
+        <button class="ce-btn" id="ce-btn">Añadir al día</button>
+      </div>
     </div>
   </div>
 
@@ -323,8 +394,9 @@ let foods = [
   {id:49,name:'Codillo jamón asado 100g',cat:'Carnes',p:23,c:1,f:7,kcal:159,unit:100,unitName:'100g',qty:0},
   {id:2,name:'Contramuslo pollo',cat:'Carnes',p:18,c:0,f:8,kcal:150,unit:100,unitName:'100g',qty:0},
   {id:3,name:'Pavo pechuga',cat:'Carnes',p:17,c:1.2,f:1.3,kcal:85,unit:100,unitName:'100g',qty:0},
-  {id:4,name:'Ternera picada',cat:'Carnes',p:20,c:0,f:15,kcal:215,unit:100,unitName:'100g',qty:0},
+  {id:4,name:'Ternera picada',cat:'Carnes',p:20,c:0,f:15,kcal:215,unit:50,unitName:'50g',qty:0},
   {id:5,name:'Hamburguesa vacuno',cat:'Carnes',p:20,c:0,f:15,kcal:215,unit:125,unitName:'hamburguesa',qty:0},
+  {id:58,name:'Filete aguja cerdo',cat:'Carnes',p:18,c:0,f:14,kcal:200,unit:50,unitName:'50g',qty:0},
   {id:6,name:'Redondo de pollo keto',cat:'Carnes',p:19,c:0,f:3,kcal:102,unit:100,unitName:'100g',qty:0},
   {id:7,name:'Salmón fresco',cat:'Pescado',p:20,c:0,f:13,kcal:200,unit:100,unitName:'100g',qty:0},
   {id:8,name:'Atún al natural (lata)',cat:'Pescado',p:26,c:0,f:1,kcal:115,unit:80,unitName:'lata',qty:0},
@@ -335,11 +407,11 @@ let foods = [
   {id:13,name:'Bacalao fresco',cat:'Pescado',p:18,c:0,f:0.5,kcal:78,unit:100,unitName:'100g',qty:0},
   {id:14,name:'Huevo entero',cat:'Huevos',p:6,c:0,f:5,kcal:70,unit:60,unitName:'huevo',qty:0},
   {id:15,name:'Claras pasteurizadas',cat:'Huevos',p:11,c:0.7,f:0,kcal:50,unit:100,unitName:'100ml',qty:0},
-  {id:16,name:'Salchicha Schara',cat:'Embutidos',p:14,c:0.8,f:20,kcal:239,unit:85,unitName:'salchicha',qty:0},
+  {id:55,name:'Salchicha Nürnberger mini',cat:'Embutidos',p:14,c:1,f:32,kcal:349,unit:25,unitName:'salchicha',qty:0},
   {id:17,name:'Salchicha cerdo Mercadona',cat:'Embutidos',p:12.3,c:0.7,f:20.8,kcal:239,unit:87.5,unitName:'salchicha',qty:0},
   {id:18,name:'Salchicha pollo-pavo',cat:'Embutidos',p:13.5,c:0.8,f:16,kcal:202,unit:100,unitName:'salchicha',qty:0},
   {id:19,name:'Jamón serrano',cat:'Embutidos',p:33.5,c:0,f:5,kcal:160,unit:8,unitName:'loncha',qty:0},
-  {id:43,name:'Pastrami ternera (Aldi)',cat:'Embutidos',p:21,c:1,f:3.2,kcal:117,unit:90,unitName:'paquete',qty:0},
+  {id:43,name:'Pastrami ternera (Aldi)',cat:'Embutidos',p:21,c:1,f:3.2,kcal:117,unit:45,unitName:'½ paquete',qty:0},
   {id:21,name:'Pavo industrial',cat:'Embutidos',p:17,c:1.2,f:1.3,kcal:85,unit:125,unitName:'paquete',qty:0},
   {id:54,name:'Queso mezcla madurado Entrepinares',cat:'Lácteos',p:27,c:1.5,f:40,kcal:474,unit:10,unitName:'trozo',qty:0},
   {id:23,name:'Queso edam lonchas',cat:'Lácteos',p:23.4,c:0,f:27.9,kcal:350,unit:22,unitName:'loncha',qty:0},
@@ -366,6 +438,7 @@ let foods = [
   {id:40,name:'Champiñones laminados',cat:'Verduras',p:2.59,c:0.5,f:0.57,kcal:20,unit:100,unitName:'100g',qty:0},
   {id:51,name:'Champiñones bolsa (286g)',cat:'Verduras',p:2.59,c:0.5,f:0.57,kcal:20,unit:286,unitName:'bolsa',qty:0},
   {id:41,name:'Tomates cherry',cat:'Verduras',p:1,c:4,f:0.2,kcal:20,unit:60,unitName:'puñado',qty:0},
+  {id:56,name:'Alcachofas fritas aceite oliva',cat:'Verduras',p:3,c:0,f:7.9,kcal:103,unit:150,unitName:'paquete',qty:0},
   {id:42,name:'Lechuga / mix hojas',cat:'Verduras',p:1,c:2,f:0.2,kcal:15,unit:80,unitName:'bol',qty:0},
 ];
 let nextId=100, activeCategory='Consumido', searchTerm='';
@@ -384,7 +457,11 @@ function showSheet(){document.getElementById('sheet').style.display='block';}
 function hideSheet(){document.getElementById('sheet').style.display='none';}
 
 // TOTALS
-function getTotals(){return foods.reduce((a,f)=>{var x=(f.qty*f.unit)/100;a.p+=f.p*x;a.c+=f.c*x;a.kcal+=f.kcal*x;return a;},{p:0,c:0,kcal:0});}
+function getTotals(){
+  var t = foods.reduce((a,f)=>{var x=(f.qty*f.unit)/100;a.p+=f.p*x;a.c+=f.c*x;a.kcal+=f.kcal*x;return a;},{p:0,c:0,kcal:0});
+  customEntries.forEach(e=>{ t.p+=Number(e.p)||0; t.c+=Number(e.c)||0; t.kcal+=Number(e.kcal)||0; });
+  return t;
+}
 
 function updateSummary(){
   var t=getTotals(),rp=Math.round(t.p),rc=Math.round(t.c),rk=Math.round(t.kcal);
@@ -430,13 +507,31 @@ function renderFoods(){
   var html='';
 
   if(activeCategory==='Consumido'){
-    // Show only selected items
     var selected=foods.filter(f=>f.qty>0);
-    if(!selected.length){
+    if(!selected.length && !customEntries.length){
       list.innerHTML='<div class="empty-state">Nada consumido todavía hoy</div>';return;
     }
-    html+=`<div class="selected-header">EN EL DÍA — ${selected.length} alimento${selected.length>1?'s':''}</div>`;
-    html+=selected.map(f=>foodHTML(f)).join('');
+    if(selected.length){
+      html+=`<div class="selected-header">EN EL DÍA — ${selected.length} alimento${selected.length>1?'s':''}</div>`;
+      html+=selected.map(f=>foodHTML(f)).join('');
+    }
+    if(customEntries.length){
+      html+=`<div class="rest-header">CONSUMOS MANUALES</div>`;
+      html+=customEntries.map(e=>`
+        <div class="food-item added">
+          <div>
+            <div class="food-name">${e.name}</div>
+            <div class="food-macros">
+              <span class="p">P ${e.p}g</span>
+              <span class="c">C ${e.c}g</span>
+              ${e.kcal?`<span class="g">${e.kcal} kcal</span>`:''}
+            </div>
+          </div>
+          <div class="food-controls">
+            <button class="qty-btn" onclick="removeCustomEntry(${e.id})" style="font-size:14px;color:var(--accent);">✕</button>
+          </div>
+        </div>`).join('');
+    }
   } else if(activeCategory==='Todos'){
     var filtered=foods.filter(f=>f.name.toLowerCase().includes(searchTerm));
     if(!filtered.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
@@ -502,7 +597,7 @@ function importJSON(ev){
 }
 
 // RESET
-function resetDay(){foods.forEach(f=>f.qty=0);saveQty();updateSummary();renderFoods();toast('Contadores a cero','');}
+function resetDay(){foods.forEach(f=>f.qty=0);customEntries=[];saveCustom();saveQty();updateSummary();renderFoods();toast('Contadores a cero','');}
 
 // TOAST
 var _tt;
@@ -518,6 +613,39 @@ function toast(msg,type){
 function changeQty(id,delta){
   var f=foods.find(x=>x.id===id);if(!f)return;
   f.qty=Math.max(0,f.qty+delta);saveQty();updateSummary();renderFoods();
+}
+
+// CUSTOM ENTRIES (day-only, not in food DB)
+var LS_CUSTOM = 'keto_custom';
+var customEntries = [];
+
+function loadCustom(){
+  try { customEntries = JSON.parse(localStorage.getItem(LS_CUSTOM)||'[]'); } catch(e){ customEntries=[]; }
+}
+function saveCustom(){ localStorage.setItem(LS_CUSTOM, JSON.stringify(customEntries)); }
+
+function addCustomEntry(){
+  var name = (document.getElementById('ce-name').value||'').trim() || 'Consumo manual';
+  var prot = parseFloat(document.getElementById('ce-prot').value) || 0;
+  var carb = parseFloat(document.getElementById('ce-carb').value) || 0;
+  var kcal = parseFloat(document.getElementById('ce-kcal').value) || 0;
+  if(prot===0 && carb===0){ toast('Pon al menos proteína o carbos','err'); return; }
+  customEntries.push({ id: Date.now(), name, p: Number(prot), c: Number(carb), kcal: Number(kcal) });
+  saveCustom();
+  document.getElementById('ce-name').value='';
+  document.getElementById('ce-prot').value='';
+  document.getElementById('ce-carb').value='';
+  document.getElementById('ce-kcal').value='';
+  updateSummary();
+  if(activeCategory==='Consumido') renderFoods();
+  toast(name+' añadido ✓','ok');
+}
+
+function removeCustomEntry(id){
+  customEntries = customEntries.filter(e=>e.id!==id);
+  saveCustom();
+  updateSummary();
+  renderFoods();
 }
 
 // FASTING
@@ -593,7 +721,7 @@ function runFast(data){
 function initFast(){var d=loadFast();if(d)runFast(d);}
 
 // ── INIT ──
-loadStorage();initFast();renderCats();renderFoods();updateSummary();
+loadStorage();loadCustom();initFast();renderCats();renderFoods();updateSummary();
 document.getElementById('search-wrap').style.display='none';
 
 // Navigation
@@ -611,6 +739,7 @@ document.getElementById('file-import').addEventListener('change',importJSON);
 
 // Sheet
 document.getElementById('btn-mas').addEventListener('click',showSheet);
+document.getElementById('ce-btn').addEventListener('click', addCustomEntry);
 document.getElementById('sheet').addEventListener('click',function(e){if(e.target===this)hideSheet();});
 document.getElementById('sheet-export').addEventListener('click',function(){exportJSON();hideSheet();});
 document.getElementById('sheet-import').addEventListener('click',function(){document.getElementById('file-import').click();hideSheet();});
